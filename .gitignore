@@ -1,0 +1,17 @@
+# 언리얼이 재생성하는 폴더 - 커밋 금지
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.vscode/
+
+# 자동 생성 솔루션 파일
+*.sln
+*.VC.db
+*.opensdf
+*.sdf
+*.suo
+*.xcodeproj
+*.xcworkspace
