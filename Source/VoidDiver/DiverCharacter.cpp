@@ -3,10 +3,37 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 ADiverCharacter::ADiverCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// 스프링암 생성 후 루트에 부착
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->TargetArmLength = BoomLength;
+	CameraBoom->bUsePawnControlRotation = false; // 낙하게임: 마우스로 카메라 안 돌림, 고정 시점
+	CameraBoom->bEnableCameraLag = true;         // 부드러운 추적
+	CameraBoom->CameraLagSpeed = 5.0f;
+	CameraBoom->SetRelativeRotation(FRotator(CameraPitch, 0.0f, 0.0f)); // 아래로 내려다봄
+
+	// 카메라를 스프링암 끝에 부착
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->bUsePawnControlRotation = false;
+
+	// CharacterMovementComponent 접근
+	GetCharacterMovement()->GravityScale = 2.0f;        // 중력 배수. 높을수록 빨리 떨어짐
+	GetCharacterMovement()->AirControl = 1.0f;          // 공중에서 100% 조작 가능
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;      // 좌우 이동 속도
+	GetCharacterMovement()->BrakingDecelerationFalling = 0.0f; // 공중에서 관성 유지
+
+	// 컨트롤러 회전이 캐릭터에 영향 안 주게 잠금. 낙하 시점 고정
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
 }
 
 void ADiverCharacter::BeginPlay()
