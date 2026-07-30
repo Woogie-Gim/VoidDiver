@@ -12,6 +12,15 @@ class VOIDDIVER_API AObstacle : public AActor
 public:
 	AObstacle();
 
+	// 풀에서 꺼내 활성화. 위치 지정 + 보이기 + Tick 켜기
+	void Activate(const FVector& NewLocation);
+
+	// 풀로 반납. 숨기기 + Tick 끄기
+	void Deactivate();
+
+	// 현재 활성 상태인지
+	bool IsActive() const { return bIsActive; }
+
 protected:
 	virtual void Tick(float DeltaTime) override;
 
@@ -26,4 +35,7 @@ protected:
 	// 이 높이(Z)보다 아래로 내려가면 스스로 제거
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle")
 	float KillZ = -2000.0f;
+
+	// 활성 상태 플래그
+	bool bIsActive = false;
 };

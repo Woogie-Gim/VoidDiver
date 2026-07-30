@@ -22,6 +22,23 @@ void AObstacle::Tick(float DeltaTime)
 	// 너무 아래로 가면 제거
 	if (NewLocation.Z < KillZ)
 	{
-		Destroy();
+		Deactivate();
 	}
+}
+
+void AObstacle::Activate(const FVector& NewLocation)
+{
+	bIsActive = true;
+	SetActorLocation(NewLocation);
+	SetActorHiddenInGame(false);   // 화면에 보이게
+	SetActorEnableCollision(true); // 충돌 켜기 (나중에 충돌 판정용)
+	SetActorTickEnabled(true);     // Tick(하강) 켜기
+}
+
+void AObstacle::Deactivate()
+{
+	bIsActive = false;
+	SetActorHiddenInGame(true);    // 화면에서 숨김
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);    // Tick 끄기 (성능 절약)
 }

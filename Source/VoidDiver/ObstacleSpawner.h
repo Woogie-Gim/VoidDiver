@@ -31,10 +31,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	float SpawnRangeX = 500.0f;
 
+	// 풀 크기. 미리 만들어둘 장애물 개수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 PoolSize = 20;
+
 private:
 	// 타이머 핸들
 	FTimerHandle SpawnTimerHandle;
 
 	// 실제 스폰 함수
 	void SpawnObstacle();
+
+	// 장애물 풀(창고)
+	UPROPERTY()
+	TArray<class AObstacle*> ObstaclePool;
+
+	// 풀 초기화 함수
+	void InitializePool();
+
+	// 풀에서 비활성 장애물 하나 반환. 없으면 nullptr
+	AObstacle* GetPooledObstacle();
 };
