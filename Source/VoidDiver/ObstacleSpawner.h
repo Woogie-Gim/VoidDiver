@@ -14,6 +14,10 @@ struct FObstaclePattern
 	// 이 패턴에 속한 장애물들의 상대 위치 (스폰 기준점에서의 오프셋)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pattern")
 	TArray<FVector> ObstacleOffsets;
+
+	// 난이도. 0=쉬움, 값이 클수록 어려움. BP에서 지정
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pattern")
+	float Difficulty = 1.0f;
 };
 
 UCLASS()
@@ -26,6 +30,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	// 스폰할 장애물 클래스. BP에서 BP_Obstacle 지정
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
@@ -51,6 +57,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<FObstaclePattern> Patterns;
 
+	// 진행도가 이 시간(초)에 도달하면 최대 난이도. BP에서 튜닝
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
+	float TimeToMaxDifficulty = 60.0f;
+
 private:
 	// 타이머 핸들
 	FTimerHandle SpawnTimerHandle;
@@ -67,4 +77,13 @@ private:
 
 	// 풀에서 비활성 장애물 하나 반환. 없으면 nullptr
 	AObstacle* GetPooledObstacle();
+
+	// 게임 시작 후 흐른 시간
+	float ElapsedTime = 0.0f;
+
+	// 진행도(0~1) 계산. 0=시작, 1=최대 난이도
+	float GetProgress() const;
+
+	// 가중치 기반 패턴 선택
+	int32 PickPatternIndex() const;
 };
