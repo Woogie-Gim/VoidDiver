@@ -2,7 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/DataAsset.h"
 #include "ObstacleSpawner.generated.h"
+
+// 패턴 하나 = 장애물들의 상대 위치 목록
+USTRUCT(BlueprintType)
+struct FObstaclePattern
+{
+	GENERATED_BODY()
+
+	// 이 패턴에 속한 장애물들의 상대 위치 (스폰 기준점에서의 오프셋)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pattern")
+	TArray<FVector> ObstacleOffsets;
+};
 
 UCLASS()
 class VOIDDIVER_API AObstacleSpawner : public AActor
@@ -35,12 +47,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 PoolSize = 20;
 
+	// 디자인해둔 패턴들. BP에서 편집
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TArray<FObstaclePattern> Patterns;
+
 private:
 	// 타이머 핸들
 	FTimerHandle SpawnTimerHandle;
 
 	// 실제 스폰 함수
-	void SpawnObstacle();
+	void SpawnPattern();
 
 	// 장애물 풀(창고)
 	UPROPERTY()

@@ -15,24 +15,33 @@ void AObstacleSpawner::BeginPlay()
 	// SpawnInterval마다 SpawnObstacle 반복 호출
 	GetWorld()->GetTimerManager().SetTimer(
 		SpawnTimerHandle, this,
-		&AObstacleSpawner::SpawnObstacle, SpawnInterval, true);
+		&AObstacleSpawner::SpawnPattern, // 변경: 패턴 단위 스폰
+		SpawnInterval, true);
 }
 
-void AObstacleSpawner::SpawnObstacle()
+void AObstacleSpawner::SpawnPattern()
 {
-	// 풀에서 놀고 있는 장애물 하나 꺼냄
-	AObstacle* Obstacle = GetPooledObstacle();
-	if (Obstacle == nullptr)
+	// 디자인된 패턴이 없으면 스킵
+	if (Patterns.Num() == 0) return;
+
+	// 패턴 하나를 랜덤 선택
+	const int32 Index = FMath::RandRange(0, Patterns.Num() - 1);
+	const FObstaclePattern& Chosen = Patterns[Index];
+
+	// 스폰 기준점 (스포너 위치 + 위쪽 높이)
+	const FVector Origin = GetActorLocation() + FVector(0.0f, 0.0f, SpawnHeight);
+
+	// 패턴에 속한 각 오프셋마다 풀에서 장애물 꺼내 배치
+	for (const FVector& Offset : Chosen.ObstacleOffsets)
 	{
-		return; // 풀이 꽉 찼으면 이번엔 스킵 (PoolSize 늘리면 해결)
+		AObstacle* Obstacle = GetPooledObstacle();
+		if (Obstacle == nullptr)
+		{
+			// 풀이 부족하면 이 패턴의 나머지는 포기 (PoolSize 늘려 해결)
+			break;
+		}
+		Obstacle->Activate(Origin + Offset);
 	}
-
-	// 좌우 랜덤 + 위쪽 높이 위치 계산
-	const float RandomX = FMath::FRandRange(-SpawnRangeX, SpawnRangeX);
-	const FVector SpawnLocation =
-		GetActorLocation() + FVector(RandomX, 0.0f, SpawnHeight);
-
-	Obstacle->Activate(SpawnLocation); // 꺼내서 그 위치에 활성화
 }
 
 void AObstacleSpawner::InitializePool()
