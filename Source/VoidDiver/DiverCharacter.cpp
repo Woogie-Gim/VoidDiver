@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ADiverCharacter::ADiverCharacter()
 {
@@ -34,6 +35,9 @@ ADiverCharacter::ADiverCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
+
+	// Ä¸½¶ÀÌ ¿À¹ö·¦ ÀÌº¥Æ®¸¦ »ý¼ºÇÏµµ·Ï
+	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 }
 
 void ADiverCharacter::BeginPlay()

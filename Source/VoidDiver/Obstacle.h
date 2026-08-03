@@ -38,4 +38,14 @@ protected:
 
 	// 활성 상태 플래그
 	bool bIsActive = false;
+
+	// 오버랩 시작 시 호출. 시그니처는 언리얼이 정한 형식 고정
+	UFUNCTION()
+	void OnObstacleOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
 };
