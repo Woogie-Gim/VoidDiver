@@ -1,6 +1,8 @@
 ﻿#include "Obstacle.h"
 #include "Components/StaticMeshComponent.h"
 #include "DiverCharacter.h"
+#include "DiverGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 AObstacle::AObstacle()
 {
@@ -68,16 +70,13 @@ void AObstacle::OnObstacleOverlap(
 	// 자기 자신이나 null과의 겹침 무시
 	if (OtherActor == nullptr || OtherActor == this) return;
 
-	// 부딪힌 대상이 플레이어 캐릭터인지 확인
 	if (OtherActor->IsA(ADiverCharacter::StaticClass()))
 	{
-		// 일단 로그로 확인 (게임오버 로직은 다음 단계)
-		UE_LOG(LogTemp, Warning, TEXT("Player Hit Obstacle!"));
-
-		// 화면에도 표시 (디버그용)
-		if (GEngine)
+		// GameMode를 가져와 게임오버 요청
+		if (ADiverGameMode* GM = Cast<ADiverGameMode>(
+			UGameplayStatics::GetGameMode(GetWorld())))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("HIT!"));
+			GM->OnGameOver();
 		}
 	}
 }
