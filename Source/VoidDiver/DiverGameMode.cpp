@@ -5,6 +5,26 @@
 ADiverGameMode::ADiverGameMode()
 {
 	DefaultPawnClass = ADiverCharacter::StaticClass();
+	PrimaryActorTick.bCanEverTick = true; // 점수 누적 위해
+}
+
+void ADiverGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	SurvivalTime = 0.0f;
+	CurrentScore = 0;
+}
+
+void ADiverGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// 게임오버면 점수 누적 중단
+	if (bIsGameOver) return;
+
+	// 생존 시간 누적 → 점수로 환산
+	SurvivalTime += DeltaTime;
+	CurrentScore = FMath::FloorToInt(SurvivalTime * ScorePerSecond);
 }
 
 void ADiverGameMode::OnGameOver()
