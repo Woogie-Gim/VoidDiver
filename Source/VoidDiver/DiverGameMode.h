@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Game")
 	bool IsGameOver() const { return bIsGameOver; }
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Game")
+	void OnGameOverBP();
+
 protected:
 	virtual void BeginPlay() override;
 

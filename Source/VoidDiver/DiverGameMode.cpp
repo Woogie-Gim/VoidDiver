@@ -49,4 +49,6 @@ void ADiverGameMode::OnGameOver()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("GAME OVER"));
 	}
+
+	OnGameOverBP();
 }
